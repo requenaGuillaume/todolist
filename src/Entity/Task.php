@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace App\Entity;
 
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
@@ -19,11 +19,11 @@ class Task
     private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Assert\Notblank(message: 'Vous devez saisir un titre.')]
+    #[Assert\NotBlank(message: 'Vous devez saisir un titre.')]
     private ?string $title = null;
 
     #[ORM\Column]
-    #[Assert\Notblank(message: 'Vous devez saisir du contenu.')]
+    #[Assert\NotBlank(message: 'Vous devez saisir du contenu.')]
     private ?string $content = null;
 
     #[ORM\Column]

@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -18,14 +18,14 @@ class User implements UserInterface
     private $id;
 
     #[ORM\Column(length: 25, unique: true)]
-    #[Assert\Notblank(message: 'Vous devez saisir un nom d\'utilisateur.')]
+    #[Assert\NotBlank(message: 'Vous devez saisir un nom d\'utilisateur.')]
     private $username;
 
     #[ORM\Column(length: 64)]
     private ?string $password = null;
 
     #[ORM\Column(length: 60, unique: true)]
-    #[Assert\Notblank(message: 'Vous devez saisir une adresse email.')]
+    #[Assert\NotBlank(message: 'Vous devez saisir une adresse email.')]
     #[Assert\Email(message: 'Le format de l\'adresse n\'est pas correcte.')]
     private ?string $email = null;
 
@@ -45,7 +45,7 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getSalt(): null
+    public function getSalt()
     {
         return null;
     }
