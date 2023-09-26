@@ -47,11 +47,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getSalt()
-    {
-        return null;
-    }
-
     public function getPassword(): ?string
     {
         return $this->password;
@@ -79,7 +74,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return ['ROLE_USER'];
     }
 
-    public function eraseCredentials()
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    public function eraseCredentials(): void
     {
     }
 
