@@ -37,7 +37,7 @@
                 <a href="{{ path('app_logout') }}" class="float-end btn btn-danger">Se déconnecter</a>
                 {% endif %}
 
-                {% if not app.user and 'login' != app.request.attributes.get('_route') %}
+                {% if not app.user and '/login' != app.request.requestUri %}
                 <a href="{{ path('app_login') }}" class="float-end btn btn-success">Se connecter</a>
                 {% endif %}
             </div>
