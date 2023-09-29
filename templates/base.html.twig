@@ -30,15 +30,15 @@
 
         <!-- Page Content -->
         <div class="container">
-            <div class="row">
+            <div class="mt-4 mb-4">
                 <a href="{{ path('user_create') }}" class="btn btn-primary">Créer un utilisateur</a>
 
                 {% if app.user %}
-                <a href="{{ path('app_logout') }}" class="pull-right btn btn-danger">Se déconnecter</a>
+                <a href="{{ path('app_logout') }}" class="float-end btn btn-danger">Se déconnecter</a>
                 {% endif %}
 
                 {% if not app.user and 'login' != app.request.attributes.get('_route') %}
-                <a href="{{ path('app_login') }}" class="btn btn-success">Se connecter</a>
+                <a href="{{ path('app_login') }}" class="float-end btn btn-success">Se connecter</a>
                 {% endif %}
             </div>
 
@@ -75,11 +75,7 @@
 
             <hr>
             <footer>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <p class="pull-right">Copyright &copy; OpenClassrooms</p>
-                    </div>
-                </div>
+                <p class="float-end mb-4">Copyright &copy; OpenClassrooms</p>
             </footer>
 
         </div>
