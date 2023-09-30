@@ -3,6 +3,10 @@
 {% block body %}
     <div>
         {{ form_start(form, {'action' : path('task_create')}) }}
+                <div>
+                    {{ form_errors(form) }}
+                </div>
+
             {{ form_label(form.title, 'Title', {'label_attr': {'class': 'form-label'}}) }}
             {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
 
