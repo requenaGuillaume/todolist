@@ -17,7 +17,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private $id;
+    private ?int $id = null;
 
     #[ORM\Column(length: 25, unique: true)]
     #[Assert\NotBlank(message: 'Vous devez saisir un nom d\'utilisateur.')]
