@@ -3,16 +3,22 @@
 namespace Tests\App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DefaultControllerTest extends WebTestCase
 {
-    public function testIndex()
+    public function testIndexIfNotLogged(): void
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/');
+        $client->request('GET', '/');
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertContains('Welcome to Symfony', $crawler->filter('#container h1')->text());
+        $urlGenerator = $client->getContainer()->get('router.default');
+        $url = $urlGenerator->generate('app_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);        
+        $this->assertEquals($url, $client->getResponse()->headers->get('Location'));        
     }
+
 }
