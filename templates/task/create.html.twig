@@ -3,10 +3,6 @@
 {% block body %}
     <div>
         {{ form_start(form, {'action' : path('task_create')}) }}
-                <div>
-                    {{ form_errors(form) }}
-                </div>
-
             {{ form_label(form.title, 'Title', {'label_attr': {'class': 'form-label fw-bold'}}) }}
             {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
             <div class="text-danger">
@@ -22,6 +18,5 @@
             <a href="{{ path('task_list') }}" class="btn btn-primary mt-4">Retour à la liste des tâches</a>
             <button type="submit" class="btn btn-success float-end mt-4">Ajouter</button>
         {{ form_end(form) }}
-
     </div>
 {% endblock %}

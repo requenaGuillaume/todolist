@@ -29,15 +29,18 @@
                     </h4>
                     <p>{{ task.content }}</p>
                 </div>
-                <div class="mt-2">                     
-                    <a class="btn btn-success btn-sm float-end">
+                <div class="mt-2">
+                    <a href="{{ path('task_toggle', {'id': task.id}) }}" 
+                       class="btn btn-success btn-sm float-end">
                         {% if not task.isDone %}
                             Marquer comme faite
                         {% else %}
                             Marquer non terminée
                         {% endif %}
                     </a>
-                    <a class="btn btn-danger btn-sm float-end me-1">Supprimer</a>                
+                    <a href="{{ path('task_delete', {'id': task.id}) }}" class="btn btn-danger btn-sm float-end me-1">
+                        Supprimer
+                    </a>                
                 </div>
             </div>
         </div>
