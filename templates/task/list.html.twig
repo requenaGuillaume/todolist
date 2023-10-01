@@ -42,9 +42,9 @@
             </div>
         </div>
         {% else %}
-            <div class="alert alert-warning" role="alert">
+            <div class="alert alert-warning mt-3" role="alert">
                 Il n'y a pas encore de tâche enregistrée. 
-                <a href="{{ path('task_create') }}" class="btn btn-warning float-end">Créer une tâche</a>
+                <a href="{{ path('task_create') }}" class="btn btn-warning float-end text-light">Créer une tâche</a>
             </div>
         {% endfor %}
     </div>
