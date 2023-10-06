@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block header_title %}<h1>Modifier <strong>{{ user.username }}</strong></h1>{% endblock %}
+{% block header_img %}{% endblock %}
+
+{% block body %}
+    <div>
+        {{ form_start(form, {'action' : path('user_edit', {'id' : user.id})}) }}
+            {{ form_label(form.username, 'Nom d\utilisateur', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+            {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.username) }}
+            </div>
+
+            {{ form_label(form.password.first, null, {'label_attr': {'class': 'form-label fw-bold mt-3'}}) }}
+            {{ form_widget(form.password.first, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.password.first) }}
+            </div>
+
+            {{ form_label(form.password.second, null, {'label_attr': {'class': 'form-label fw-bold mt-3'}}) }}
+            {{ form_widget(form.password.second, {'attr': {'class': 'form-control'}}) }}
+
+            {{ form_label(form.email, null, {'label_attr': {'class': 'form-label fw-bold mt-3'}}) }}
+            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.email) }}
+            </div>
+
+            <button type="submit" class="btn btn-success float-end">Modifier</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
