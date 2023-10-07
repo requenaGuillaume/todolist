@@ -155,6 +155,98 @@ class UserControllerTest extends WebTestCase
         $this->assertEquals('user_create', $client->getRequest()->attributes->get('_route'));
     }
 
-    // TODO test edit()
+    public function testEditSuccess(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $testUser = $userRepository->findOneBy(['email' => 'test@test.test']);
+        $userName = $testUser->getUsername();
+
+        $client->loginUser($testUser);
+        $crawler = $client->request('GET', "/users/{$testUser->getId()}/edit");
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertEquals('user_edit', $client->getRequest()->attributes->get('_route'));
+        $this->assertEquals(1, $crawler->filter('h1')->count());
+        $this->assertEquals("Modifier $userName", $crawler->filter('h1')->text());
+
+        $form = $crawler->selectButton('Modifier')->form();
+
+        $form->setValues([
+            'user' => [
+                'username' => 'testEdit',
+                'password' => ['first' => 'password', 'second' => 'password'],
+                'email' => 'testEdit@test.test'
+            ]
+        ]);
+
+        $client->submit($form);
+        $client->followRedirect();
+
+        $this->assertSelectorTextContains('div.alert.alert-success', 'Superbe ! L\'utilisateur a bien été modifié');
+
+        $updatedUser = $userRepository->findOneBy(['email' => 'testEdit@test.test']);
+
+        $this->assertEquals($testUser->getId(), $updatedUser->getId());
+        $this->assertNotEquals($testUser->getUsername(), $updatedUser->getUsername());
+        $this->assertNotEquals($testUser->getEmail(), $updatedUser->getEmail());
+        $this->assertEquals('user_list', $client->getRequest()->attributes->get('_route'));
+    }
+
+    // /!\ TODO - remove after setup() and reset database (with external library ?)
+    public function testResetTestUser(): void
+    {
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $updatedUser = $userRepository->findOneBy(['email' => 'testEdit@test.test']);
+
+        $updatedUser->setUsername('test')->setEmail('test@test.test');
+
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em->flush();
+
+        // just to have no risky test
+        $this->assertTrue(true);
+    }
+
+    public function testEditFails(): void
+    {
+        $client = static::createClient();
+
+        $userRepository = static::getContainer()->get(UserRepository::class);
+        $testUser = $userRepository->findOneBy(['email' => 'test@test.test']);
+        $userName = $testUser->getUsername();
+
+        $client->loginUser($testUser);
+        $crawler = $client->request('GET', "/users/{$testUser->getId()}/edit");
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertEquals('user_edit', $client->getRequest()->attributes->get('_route'));
+        $this->assertEquals(1, $crawler->filter('h1')->count());
+        $this->assertEquals("Modifier $userName", $crawler->filter('h1')->text());
+
+        $form = $crawler->selectButton('Modifier')->form();
+
+        $form->setValues([
+            'user' => [
+                'username' => '',
+                'password' => ['first' => 'newPassword', 'second' => 'oldPassword'],
+                'email' => 'testEdittest.test'
+            ]
+        ]);
+
+        $client->submit($form);
+
+        $updatedUser = $userRepository->findOneBy(['email' => 'test@test.test']);
+
+        $this->assertSelectorTextContains('form div:nth-of-type(1) li', 'Vous devez saisir un nom d\'utilisateur.');
+        $this->assertSelectorTextContains('form div:nth-of-type(2) li', 'Les deux mots de passe doivent correspondre.');
+        $this->assertSelectorTextContains('form div:nth-of-type(3) li', 'Le format de l\'adresse n\'est pas correcte.'); 
+
+        $this->assertEquals($testUser->getId(), $updatedUser->getId());
+        $this->assertEquals($testUser->getUsername(), $updatedUser->getUsername());
+        $this->assertEquals($testUser->getEmail(), $updatedUser->getEmail());
+        $this->assertEquals('user_edit', $client->getRequest()->attributes->get('_route'));
+    }
 
 }
