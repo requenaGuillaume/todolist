@@ -29,6 +29,15 @@
         </include>
     </coverage>
 
+    <filter>
+        <whitelist>
+            <directory>src/</directory>
+        </whitelist>
+        <blacklist>
+            <directory>vendor/</directory>
+        </blacklist>
+    </filter>
+
     <listeners>
         <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
     </listeners>
