@@ -16,7 +16,6 @@ class LoginControllerTest extends WebTestCase
     private Form $form;
     private User $testUser;
     private Crawler $crawler;
-    private EntityManagerInterface $em;
     private static KernelBrowser $client;
 
     public static function setUpBeforeClass(): void

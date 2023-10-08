@@ -2,39 +2,43 @@
 
 namespace Tests\App\Controller;
 
-use App\Repository\UserRepository;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class DefaultControllerTest extends WebTestCase
 {
+    private KernelBrowser $client;
+
+    public function setUp(): void
+    {
+        $this->client = static::createClient();
+    }
+
     public function testIndexIfNotLogged(): void
     {
-        $client = static::createClient();
-
-        $client->request('GET', '/');
-
-        $urlGenerator = $client->getContainer()->get('router.default');
-        $url = $urlGenerator->generate('app_login', [], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);        
-        $this->assertEquals($url, $client->getResponse()->headers->get('Location'));        
+        $this->client->request('GET', '/');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);              
         
-        $client->followRedirect();
-        $this->assertEquals('app_login', $client->getRequest()->attributes->get('_route'));
+        $this->client->followRedirect();
+        $this->assertEquals('app_login', $this->client->getRequest()->attributes->get('_route'));
     }
 
     public function testIndexIfLogged(): void
     {
-        $client = static::createClient();
+        $testUser = new User();
+        $testUser->setUsername('test')
+            ->setEmail('test@test.test')
+            ->setPassword('$2y$04$Gy1WKJfRNPtDjynITKF9o.8z5hMtxC8wA0m8wTBR2LBhGUjcC4tOC');
 
-        // TODO - use fixtures ? create the user here ?
-        $userRepository = static::getContainer()->get(UserRepository::class);
-        $testUser = $userRepository->findOneBy(['email' => 'test@test.test']);
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em->persist($testUser);
+        $em->flush();
 
-        $client->loginUser($testUser);
-        $crawler = $client->request('GET', '/');
+        $this->client->loginUser($testUser);
+        $crawler = $this->client->request('GET', '/');
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);       
         $this->assertSame(1, $crawler->filter('h1')->count());
@@ -42,5 +46,8 @@ class DefaultControllerTest extends WebTestCase
             "Bienvenue sur Todo List, l'application vous permettant de gérer l'ensemble de vos tâches sans effort !", 
             $crawler->filter('h1')->text()
         );
+
+        $em->remove($testUser);
+        $em->flush();
     }
 }
