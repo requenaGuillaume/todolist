@@ -19,7 +19,7 @@ class UserController extends AbstractController
         
     }
 
-    #[Route('/users', name: 'user_list')]
+    #[Route('/users', name: 'user_list', methods: ['GET'])]
     public function list(UserRepository $userRepository): Response
     {
         return $this->render('user/list.html.twig', [
@@ -27,7 +27,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/users/create', name: 'user_create')]
+    #[Route('/users/create', name: 'user_create', methods: ['GET', 'POST'])]
     public function create(Request $request, UserPasswordHasherInterface $hasher): Response
     {
         $user = new User();
@@ -50,7 +50,7 @@ class UserController extends AbstractController
         return $this->render('user/create.html.twig', ['form' => $form->createView()]);
     }
 
-    #[Route('/users/{id}/edit', name: 'user_edit')]
+    #[Route('/users/{id}/edit', name: 'user_edit', methods: ['GET', 'POST'])]
     public function edit(User $user, Request $request, UserPasswordHasherInterface $hasher): Response
     {
         $form = $this->createForm(UserType::class, $user);
