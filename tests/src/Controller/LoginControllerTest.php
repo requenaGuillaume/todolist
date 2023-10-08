@@ -2,56 +2,79 @@
 
 namespace Tests\App\Controller;
 
+use App\Entity\User;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 
 class LoginControllerTest extends WebTestCase
 {
-    public function testLoginSuccess(): void
+    private Form $form;
+    private User $testUser;
+    private Crawler $crawler;
+    private EntityManagerInterface $em;
+    private static KernelBrowser $client;
+
+    public static function setUpBeforeClass(): void
     {
-        $client = static::createClient();
+        self::$client = static::createClient();
+    }
 
-        $crawler = $client->request('GET', '/login');
+    public function setUp(): void
+    {
+        $this->testUser = new User();
+        $this->testUser->setUsername('test')
+            ->setEmail('test@test.test')
+            ->setPassword('$2y$04$Gy1WKJfRNPtDjynITKF9o.8z5hMtxC8wA0m8wTBR2LBhGUjcC4tOC');
+        
+        $em = static::getContainer()->get(EntityManagerInterface::class);
+        $em->persist($this->testUser);
+        $em->flush();
 
-        $form = $crawler->selectButton('Se connecter')->form();
+        $this->crawler = self::$client->request('GET', '/login');
+        $this->form = $this->crawler->selectButton('Se connecter')->form();
+    }
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);                
-        $this->assertEquals('app_login', $client->getRequest()->attributes->get('_route'));
-
-        $form->setValues([
-            '_username' => 'test',
-            '_password' => 'password'
-        ]);
-
-        $client->submit($form);
-        $client->followRedirect();
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK); 
-        $this->assertEquals('homepage', $client->getRequest()->attributes->get('_route'));
+    public function tearDown(): void
+    {
+        $connection = $this->getContainer()->get(Connection::class);
+        $connection->executeQuery('TRUNCATE TABLE user');
     }
 
     public function testLoginFails(): void
     {
-        $client = static::createClient();
-
-        $crawler = $client->request('GET', '/login');
-
-        $form = $crawler->selectButton('Se connecter')->form();
-
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);                
-        $this->assertEquals('app_login', $client->getRequest()->attributes->get('_route'));
-
-        $form->setValues([
+        $this->form->setValues([
             '_username' => 'dummy',
             '_password' => 'dummy'
         ]);
 
-        $client->submit($form);
-        $client->followRedirect();
+        self::$client->submit($this->form);
+        self::$client->followRedirect();
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK); 
         $this->assertSelectorTextContains('div.alert.alert-danger', 'Invalid credentials.');
-        $this->assertEquals('app_login', $client->getRequest()->attributes->get('_route'));
+        $this->assertEquals('app_login', self::$client->getRequest()->attributes->get('_route'));
+    }
+
+    public function testLoginSuccess(): void
+    {   
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);                
+        $this->assertEquals('app_login', self::$client->getRequest()->attributes->get('_route'));
+
+        $this->form->setValues([
+            '_username' => 'test',
+            '_password' => 'password'
+        ]);
+
+        self::$client->submit($this->form);
+        self::$client->followRedirect();
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK); 
+        $this->assertEquals('homepage', self::$client->getRequest()->attributes->get('_route'));
     }
 
 }
