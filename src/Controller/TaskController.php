@@ -67,7 +67,7 @@ class TaskController extends AbstractController
     }
 
     #[Route('/tasks/{id}/toggle', name: 'task_toggle')]
-    public function toggle(Task $task): Response
+    public function toggle(Task $task): RedirectResponse
     {
         $task->toggle(!$task->isDone());
         $this->em->flush();
