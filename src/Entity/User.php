@@ -42,7 +42,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->username;
     }
 
-    public function setUsername($username): self
+    public function setUsername(string $username): self
     {
         $this->username = $username;
         return $this;
@@ -53,7 +53,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword($password): self
+    public function setPassword(string $password): self
     {
         $this->password = $password;
         return $this;
@@ -64,7 +64,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
-    public function setEmail($email): self
+    public function setEmail(string $email): self
     {
         $this->email = $email;
         return $this;
