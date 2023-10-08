@@ -5,6 +5,7 @@ namespace Tests\App\Controller;
 use App\Entity\User;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
+use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -74,6 +75,19 @@ class LoginControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK); 
         $this->assertEquals('homepage', self::$client->getRequest()->attributes->get('_route'));
+    }
+
+    public function testLogout(): void
+    {
+        self::$client->request('GET', '/logout');
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);              
+        
+        self::$client->followRedirect();
+        $this->assertEquals('homepage', self::$client->getRequest()->attributes->get('_route'));
+
+        self::$client->followRedirect();
+        $this->assertEquals('app_login', self::$client->getRequest()->attributes->get('_route'));
     }
 
 }

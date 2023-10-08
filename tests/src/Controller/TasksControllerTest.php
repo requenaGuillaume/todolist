@@ -6,6 +6,7 @@ use App\Entity\Task;
 use App\Entity\User;
 use Doctrine\DBAL\Connection;
 use App\Repository\TaskRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -117,7 +118,8 @@ class TasksControllerTest extends WebTestCase
 
     public function testEditSuccess(): void
     {
-        $task = $this->createTestTask(); 
+        $now = new DateTimeImmutable();
+        $task = $this->createTestTask($now); 
  
         $crawler = $this->client->request('GET', "/tasks/{$task->getId()}/edit");
     
@@ -143,6 +145,7 @@ class TasksControllerTest extends WebTestCase
         $this->assertEquals($task->getId(), $updatedTask->getId());
         $this->assertNotEquals($task->getTitle(), $updatedTask->getTitle());
         $this->assertNotEquals($task->getContent(), $updatedTask->getContent());
+        $this->assertEquals($now->format('Y-m-d'), $updatedTask->getCreatedAt()->format('Y-m-d'));
         $this->assertEquals('task_list', $this->client->getRequest()->attributes->get('_route'));
     }
 
@@ -212,13 +215,13 @@ class TasksControllerTest extends WebTestCase
     }
 
 
-    private function createTestTask(bool $isDone = false): Task
+    private function createTestTask(DateTimeImmutable $dateTime = new DateTimeImmutable(),  bool $isDone = false): Task
     {
         $task = new Task();
 
         $task->setTitle('test')
             ->setContent('test test test')
-            ->setCreatedAt(new \DateTimeImmutable())
+            ->setCreatedAt($dateTime)
             ->isDone($isDone);
 
         $this->em->persist($task);
