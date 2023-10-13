@@ -67,7 +67,7 @@ class TaskController extends AbstractController
     }
 
     #[Route('/tasks/{id}/toggle', name: 'task_toggle')]
-    public function toggleTask(Task $task): Response
+    public function toggle(Task $task): RedirectResponse
     {
         $task->toggle(!$task->isDone());
         $this->em->flush();
@@ -78,7 +78,7 @@ class TaskController extends AbstractController
     }
 
     #[Route('/tasks/{id}/delete', name: 'task_delete')]
-    public function deleteTask(Task $task): RedirectResponse
+    public function delete(Task $task): RedirectResponse
     {
         $this->em->remove($task);
         $this->em->flush();
