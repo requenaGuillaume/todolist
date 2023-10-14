@@ -57,7 +57,7 @@ class Task
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title = null): self
     {
         $this->title = $title;
         return $this;
@@ -68,7 +68,7 @@ class Task
         return $this->content;
     }
 
-    public function setContent(string $content): self
+    public function setContent(?string $content = null): self
     {
         $this->content = $content;
         return $this;
