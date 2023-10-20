@@ -50,6 +50,7 @@ class UserController extends AbstractController
         return $this->render('user/create.html.twig', ['form' => $form->createView()]);
     }
 
+    // TODO edition de roles ne marche pas - l'ancien role (admin) reste
     #[Route('/users/{id}/edit', name: 'user_edit', methods: ['GET', 'POST'])]
     public function edit(User $user, Request $request, UserPasswordHasherInterface $hasher): Response
     {
@@ -60,6 +61,38 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $password = $hasher->hashPassword($user, $user->getPassword());
             $user->setPassword($password);
+// dd($form->getData());
+
+
+            //  CHECKBOX - marche - dd dans le UserController.php (en DB admin array, user json ??)
+            // UserController.php on line 64:
+            // App\Entity\User {#580 ▼
+            //   -id: 3
+            //   -username: "coco"
+            //   -password: "$2y$13$NrJXrLZS5m6QStD16yXd7u2YlqI1RkV.nt32.HkqARLjgR65pw3WO"
+            //   -email: "fdfd@fd.fd"
+            //   -roles: array:1 [▼
+            //     0 => "ROLE_ADMIN"
+            //   ]
+            // }
+
+            // SELECT - Ne marche pas - dd dans le UserType.php
+            // UserType.php on line 50:
+            //     array:4 [▼
+            //     "username" => "coco"
+            //     "password" => array:2 [▶]
+            //     "email" => "fdfd@fd.fd"
+            //     "roles" => array:1 [▼
+            //         0 => "ROLE_USER"
+            //     ]
+            // ]
+
+            // // Supprimez les anciens rôles
+            // $user->setRoles([]);
+
+            // // Ajoutez le rôle sélectionné
+            // $selectedRole = $form->get('roles')->getData();
+            // $user->setRoles($selectedRole);
 
             $this->em->flush();
 
