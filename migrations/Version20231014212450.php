@@ -12,13 +12,13 @@ final class Version20231014212450 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Create the anonymous user (existant tasks will belong to this user)';
     }
 
     public function up(Schema $schema): void
     {
         $this->addSql("INSERT INTO user (username, password, email, roles)
-            VALUES ('anonyme', 'invalidPasswordBecauseNotHashed', 'fake-email@fake.fake', '[\"ROLE_ADMIN\"]')"
+            VALUES ('anonyme', 'invalidPasswordBecauseNotHashed', 'anonymous@unexistant.dummy', '[\"ROLE_ADMIN\"]')"
         );
     }
 
