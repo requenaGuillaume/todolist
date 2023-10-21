@@ -30,7 +30,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/users/create', name: 'user_create', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
+    // #[IsGranted('ROLE_ADMIN')]
     public function create(Request $request, UserPasswordHasherInterface $hasher): Response
     {
         $user = new User();
