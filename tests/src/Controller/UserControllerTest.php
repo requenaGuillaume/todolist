@@ -25,6 +25,7 @@ class UserControllerTest extends WebTestCase
         $this->testUser = new User();
         $this->testUser->setUsername('test')
             ->setEmail('test@test.test')
+            ->setRoles(['ROLE_ADMIN'])
             ->setPassword('$2y$04$Gy1WKJfRNPtDjynITKF9o.8z5hMtxC8wA0m8wTBR2LBhGUjcC4tOC');
 
         $container = static::getContainer();

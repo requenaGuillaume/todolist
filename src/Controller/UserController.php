@@ -6,11 +6,12 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
 {
@@ -20,6 +21,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/users', name: 'user_list', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function list(UserRepository $userRepository): Response
     {
         return $this->render('user/list.html.twig', [
@@ -28,6 +30,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/users/create', name: 'user_create', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function create(Request $request, UserPasswordHasherInterface $hasher): Response
     {
         $user = new User();
@@ -52,6 +55,7 @@ class UserController extends AbstractController
 
     // TODO edition de roles ne marche pas - l'ancien role (admin) reste
     #[Route('/users/{id}/edit', name: 'user_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(User $user, Request $request, UserPasswordHasherInterface $hasher): Response
     {
         $form = $this->createForm(UserType::class, $user);
