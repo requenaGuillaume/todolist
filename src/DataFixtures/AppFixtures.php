@@ -22,24 +22,11 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        $admin = new User();
-        $admin->setEmail('toto@toto.toto')
-            ->setRoles(['ROLE_ADMIN'])
-            ->setUsername('toto')
-            ->setPassword($this->hasher->hashPassword($admin, 'toto'));
-
-        $manager->persist($admin);
-
+        $admin = $this->createUser($manager, 'toto@toto.toto', 'toto', 'ROLE_ADMIN', 'toto');
         $anonymous = $this->userRepository->findOneBy(['username' => 'anonyme']);
 
         if(!$anonymous){
-            $anonymous = new User();
-            $anonymous->setEmail('anonymous@unexistant.dummy')
-                ->setRoles(['ROLE_USER'])
-                ->setUsername('anonyme')
-                ->setPassword($this->hasher->hashPassword($anonymous, 'password'));
-
-            $manager->persist($anonymous);
+            $anonymous = $this->createUser($manager, 'anonymous@unexistant.dummy', 'anonyme', 'ROLE_USER', 'password');
         }
 
         for($i = 0; $i < 3; $i++){
@@ -48,6 +35,11 @@ class AppFixtures extends Fixture
 
         for($i = 3; $i < 6; $i++){
             $this->createTask($admin, $i, $manager);
+        }
+
+        for($i = 7; $i < 10; $i++){
+            $user = $this->createUser($manager, "user$i@mail.com", "User #$i", 'ROLE_USER', 'password');
+            $this->createTask($user, $i, $manager);
         }
 
         $manager->flush();
@@ -62,5 +54,24 @@ class AppFixtures extends Fixture
             ->setUser($user);
 
         $manager->persist($task);
+    }
+
+    private function createUser(
+        ObjectManager $manager,
+        string $email, 
+        string $username, 
+        string $role,
+        string $password
+    ): User
+    {
+        $user = new User();
+        $user->setEmail($email)
+            ->setRoles([$role])
+            ->setUsername($username)
+            ->setPassword($this->hasher->hashPassword($user, $password));
+        
+        $manager->persist($user);
+
+        return $user;
     }
 }

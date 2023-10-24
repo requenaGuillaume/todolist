@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Task;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,13 +82,24 @@ class TaskController extends AbstractController
     }
 
     #[Route('/tasks/{id}/delete', name: 'task_delete', methods: ['GET'])]
-    public function delete(Task $task): RedirectResponse
+    public function delete(Task $task, UserRepository $userRepository): RedirectResponse
     {
+        $anonymous = $userRepository->findOneBy(['username' => 'anonyme']);
+
+        $taskOwner = $task->getUser();
+
+        $canDeleteAnonymousTasks = $taskOwner === $anonymous && $this->isGranted('ROLE_ADMIN');
+
+        if(!$canDeleteAnonymousTasks && $taskOwner !== $this->getUser()){
+            $this->addFlash('error', 'Vous n\'êtes pas propriétaire de cette tache, vous ne pouvez donc pas la supprimer.');
+            return $this->redirectToRoute('task_list');
+        }
+
         $this->em->remove($task);
         $this->em->flush();
 
         $this->addFlash('success', 'La tâche a bien été supprimée.');
 
         return $this->redirectToRoute('task_list');
-    }
+    }    
 }
