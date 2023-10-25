@@ -216,15 +216,18 @@ class TasksControllerTest extends WebTestCase
 
     public function testDeleteFail(): void
     {    
+
         $user = new User();
         $user->setEmail('dummy@dummy.dummy')
-            ->setUsername('dummy')
-            ->setPassword('pass');
-
+        ->setUsername('dummy')
+        ->setPassword('pass');
+        
         $this->em->persist($user);
         $this->em->flush();
+        
+        $this->client->loginUser($user);
 
-        $task = $this->createTestTask($user);
+        $task = $this->createTestTask($this->testUser);
 
         $this->client->request('GET', "/tasks/{$task->getId()}/delete");
         $this->client->followRedirect();
