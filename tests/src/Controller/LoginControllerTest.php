@@ -42,7 +42,7 @@ class LoginControllerTest extends WebTestCase
     public function tearDown(): void
     {
         $connection = $this->getContainer()->get(Connection::class);
-        $connection->executeQuery('TRUNCATE TABLE user');
+        $connection->executeQuery('DELETE FROM user');
     }
 
     public function testLoginFails(): void
@@ -81,10 +81,7 @@ class LoginControllerTest extends WebTestCase
     {
         self::$client->request('GET', '/logout');
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);              
-        
-        self::$client->followRedirect();
-        $this->assertEquals('homepage', self::$client->getRequest()->attributes->get('_route'));
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
 
         self::$client->followRedirect();
         $this->assertEquals('app_login', self::$client->getRequest()->attributes->get('_route'));

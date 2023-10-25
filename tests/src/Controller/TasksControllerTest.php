@@ -18,7 +18,7 @@ class TasksControllerTest extends WebTestCase
     private KernelBrowser $client;
     private EntityManagerInterface $em;
     private TaskRepository $taskRepository;
-
+    private User $testUser;
     
     public function setUp(): void
     {
@@ -29,22 +29,22 @@ class TasksControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
 
-        $testUser = new User();
-        $testUser->setUsername('test')
+        $this->testUser = new User();
+        $this->testUser->setUsername('test')
             ->setEmail('test@test.test')
             ->setPassword('$2y$04$Gy1WKJfRNPtDjynITKF9o.8z5hMtxC8wA0m8wTBR2LBhGUjcC4tOC');
         
-        $this->em->persist($testUser);
+        $this->em->persist($this->testUser);
         $this->em->flush();
 
-        $this->client->loginUser($testUser);
+        $this->client->loginUser($this->testUser);
     }
 
     public function tearDown(): void
     {
         $connection = $this->getContainer()->get(Connection::class);
-        $connection->executeQuery('TRUNCATE TABLE user');
-        $connection->executeQuery('TRUNCATE TABLE task');
+        $connection->executeQuery('DELETE FROM task');
+        $connection->executeQuery('DELETE FROM user');
     }
 
     public function testListEmpty(): void
@@ -222,6 +222,7 @@ class TasksControllerTest extends WebTestCase
         $task->setTitle('test')
             ->setContent('test test test')
             ->setCreatedAt($dateTime)
+            ->setUser($this->testUser)
             ->isDone($isDone);
 
         $this->em->persist($task);

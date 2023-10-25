@@ -40,7 +40,9 @@ class UserControllerTest extends WebTestCase
     public function tearDown(): void
     {
         $connection = $this->getContainer()->get(Connection::class);
-        $connection->executeQuery('TRUNCATE TABLE user');
+        // $connection->executeQuery('TRUNCATE TABLE user');
+        $connection->executeQuery('DELETE FROM user');
+
     }
 
     public function testList(): void
