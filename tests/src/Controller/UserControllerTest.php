@@ -40,9 +40,7 @@ class UserControllerTest extends WebTestCase
     public function tearDown(): void
     {
         $connection = $this->getContainer()->get(Connection::class);
-        // $connection->executeQuery('TRUNCATE TABLE user');
         $connection->executeQuery('DELETE FROM user');
-
     }
 
     public function testList(): void
@@ -70,7 +68,8 @@ class UserControllerTest extends WebTestCase
             'user' => [
                 'username' => 'toto',
                 'password' => ['first' => 'password', 'second' => 'password'],
-                'email' => 'toto@gmail.com'
+                'email' => 'toto@gmail.com',
+                'roles' => 'ROLE_ADMIN'
             ]
         ]);
 
@@ -161,13 +160,18 @@ class UserControllerTest extends WebTestCase
             'user' => [
                 'username' => 'testEdit',
                 'password' => ['first' => 'password', 'second' => 'password'],
-                'email' => 'testEdit@test.test'
+                'email' => 'testEdit@test.test',
+                'roles' => 'ROLE_USER'
             ]
         ]);
 
         $this->client->submit($form);
         $this->client->followRedirect();
-
+        $this->assertEquals('user_list', $this->client->getRequest()->attributes->get('_route'));
+        
+        // TODO - Ce test ne passe plus, mais il passait avant
+dd($this->client->getRequest()->getSession());
+dd($this->client->getRequest()->attributes->get('_route'));
         $this->assertSelectorTextContains('div.alert.alert-success', 'Superbe ! L\'utilisateur a bien été modifié');
 
         $updatedUser = $this->userRepository->find($this->testUser->getId());

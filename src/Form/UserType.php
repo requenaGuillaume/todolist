@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -29,32 +30,11 @@ class UserType extends AbstractType
             ->add('email', EmailType::class, ['label' => 'Adresse email'])
             ->add('roles', ChoiceType::class, [
                 'choices' => User::ROLES_LIST,
-                'multiple' => true,
-                'expanded' => true,
-                // 'multiple' => false,
-                // 'expanded' => false,
-                // 'mapped' => false,
+                'multiple' => false,
+                'expanded' => false,
+                'mapped' => false,
             ])
-            // ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit'])
         ;
-    }
-
-    public function onPreSubmit(FormEvent $event): void
-    {        
-        $roles[] = $event->getData()['roles'];
-        $data = $event->getData();
-        $data['roles'] = $roles;
-
-        $user = $event->getForm()->getData();
-        $user->setRoles($roles);
-
-        $event->setData($data);
-// dd($event->getData());
-        // $data = $event->getData();
-        // $rolesString = $data['roles'];
-        // $rolesArray = [$rolesString];
-        // $data['roles'] = $rolesArray;
-        // $event->setData($data);
     }
 
 }
