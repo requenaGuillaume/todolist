@@ -146,13 +146,22 @@ class UserControllerTest extends WebTestCase
 
     public function testEditSuccess(): void
     {
+        $user = new User();
+        $user->setUsername('test2')
+            ->setEmail('test2@gmail.com')
+            ->setRoles(['ROLE_ADMIN'])
+            ->setPassword('password');
+
+        $this->em->persist($user);
+        $this->em->flush();
+
         $this->client->loginUser($this->testUser);
-        $crawler = $this->client->request('GET', "/users/{$this->testUser->getId()}/edit");
+        $crawler = $this->client->request('GET', "/users/{$user->getId()}/edit");
 
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertEquals('user_edit', $this->client->getRequest()->attributes->get('_route'));
         $this->assertEquals(1, $crawler->filter('h1')->count());
-        $this->assertEquals("Modifier {$this->testUser->getUsername()}", $crawler->filter('h1')->text());
+        $this->assertEquals("Modifier {$user->getUsername()}", $crawler->filter('h1')->text());
 
         $form = $crawler->selectButton('Modifier')->form();
 
@@ -168,17 +177,13 @@ class UserControllerTest extends WebTestCase
         $this->client->submit($form);
         $this->client->followRedirect();
         $this->assertEquals('user_list', $this->client->getRequest()->attributes->get('_route'));
-        
-        // TODO - Ce test ne passe plus, mais il passait avant
-dd($this->client->getRequest()->getSession());
-dd($this->client->getRequest()->attributes->get('_route'));
         $this->assertSelectorTextContains('div.alert.alert-success', 'Superbe ! L\'utilisateur a bien été modifié');
 
-        $updatedUser = $this->userRepository->find($this->testUser->getId());
+        $updatedUser = $this->userRepository->find($user->getId());
 
-        $this->assertEquals($this->testUser->getId(), $updatedUser->getId());
-        $this->assertNotEquals($this->testUser->getUsername(), $updatedUser->getUsername());
-        $this->assertNotEquals($this->testUser->getEmail(), $updatedUser->getEmail());
+        $this->assertEquals($user->getId(), $updatedUser->getId());
+        $this->assertNotEquals($user->getUsername(), $updatedUser->getUsername());
+        $this->assertNotEquals($user->getEmail(), $updatedUser->getEmail());
         $this->assertEquals('user_list', $this->client->getRequest()->attributes->get('_route'));
     }
 
