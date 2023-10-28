@@ -17,7 +17,7 @@ class UserController extends AbstractController
 {
     public function __construct(private EntityManagerInterface $em)
     {
-        
+
     }
 
     #[Route('/users', name: 'user_list', methods: ['GET'])]
@@ -44,7 +44,7 @@ class UserController extends AbstractController
 
             $role = $form->get('roles')->getNormData();
 
-            if(!in_array($role, User::ROLES_LIST)){
+            if(!in_array($role, User::ROLES_LIST)) {
                 $this->addFlash('danger', 'Role invalid');
                 return $this->redirectToRoute('user_create');
             }
@@ -76,7 +76,7 @@ class UserController extends AbstractController
 
             $role = $form->get('roles')->getNormData();
 
-            if(!in_array($role, User::ROLES_LIST)){
+            if(!in_array($role, User::ROLES_LIST)) {
                 $this->addFlash('danger', 'Role invalid');
                 return $this->redirectToRoute('user_create');
             }

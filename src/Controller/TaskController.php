@@ -19,7 +19,7 @@ class TaskController extends AbstractController
 {
     public function __construct(private EntityManagerInterface $em)
     {
-        
+
     }
 
     #[Route('/tasks', name: 'task_list', methods: ['GET'])]
@@ -40,7 +40,7 @@ class TaskController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var User $user */
             $user = $this->getUser();
-            
+
             $task->setUser($user);
             $this->em->persist($task);
             $this->em->flush();
@@ -94,7 +94,7 @@ class TaskController extends AbstractController
 
         $canDeleteAnonymousTasks = $taskOwner === $anonymous && $this->isGranted('ROLE_ADMIN');
 
-        if(!$canDeleteAnonymousTasks && $taskOwner !== $this->getUser()){
+        if(!$canDeleteAnonymousTasks && $taskOwner !== $this->getUser()) {
             $this->addFlash('error', 'Vous n\'êtes pas propriétaire de cette tache, vous ne pouvez donc pas la supprimer.');
             return $this->redirectToRoute('task_list');
         }
@@ -105,5 +105,5 @@ class TaskController extends AbstractController
         $this->addFlash('success', 'La tâche a bien été supprimée.');
 
         return $this->redirectToRoute('task_list');
-    }    
+    }
 }
