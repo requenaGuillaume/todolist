@@ -253,7 +253,7 @@ class TasksControllerTest extends WebTestCase
             ->setContent('test test test')
             ->setCreatedAt($dateTime)
             ->setUser($user)
-            ->isDone($isDone);
+            ->toggle($isDone);
 
         $this->em->persist($task);
         $this->em->flush();
