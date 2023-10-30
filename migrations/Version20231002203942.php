@@ -31,5 +31,6 @@ final class Version20231002203942 extends AbstractMigration
         $this->addSql('DROP TABLE task');
         $this->addSql('DROP TABLE user');
         $this->addSql('DROP TABLE messenger_messages');
+        
     }
 }
