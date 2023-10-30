@@ -104,10 +104,5 @@
       "allow-contrib": false,
       "require": "6.3.*"
     }
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "php vendor/bin/phpunit"
-    }
   }
 }
