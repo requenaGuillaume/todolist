@@ -1,9 +1,0 @@
-{
-  "scripts": {
-    "prepare": "husky install",
-    "prepush": "php vendor/bin/phpunit"
-  },
-  "devDependencies": {
-    "husky": "^8.0.0"
-  }
-}
