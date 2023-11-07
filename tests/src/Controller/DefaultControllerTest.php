@@ -24,7 +24,6 @@ class DefaultControllerTest extends WebTestCase
         
         $this->client->followRedirect();
         $this->assertEquals('app_login', $this->client->getRequest()->attributes->get('_route'));
-        $this->assertTrue(false); // test hook pre push
     }
 
     public function testIndexIfLogged(): void
