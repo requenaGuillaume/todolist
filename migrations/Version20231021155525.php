@@ -22,7 +22,6 @@ final class Version20231021155525 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE task MODIFY user_id INT DEFAULT NULL');
-             
+        $this->addSql('ALTER TABLE task MODIFY user_id INT DEFAULT NULL');             
     }
 }
