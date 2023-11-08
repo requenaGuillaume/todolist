@@ -4,6 +4,6 @@
   },
   "scripts": {
     "prepare": "husky install",
-    "tests": "vendor/bin/phpunit"
+    "tests": "php vendor/bin/phpunit"
   }
 }
