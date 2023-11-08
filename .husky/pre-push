@@ -1,6 +1,11 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+echo "=============== Launch phpstan ==============="
 npm run phpstan
+
+echo "=============== Launch cs fix ==============="
 npm run csfixer
+
+echo "=============== Launch tests ==============="
 npm run tests
