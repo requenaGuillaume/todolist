@@ -41,7 +41,7 @@ class TaskController extends AbstractController implements FormCreateEditInterfa
     {
         return $this->formProcess($request, $task);
     }
-    
+
     #[Route('/tasks/{id}/toggle', name: 'task_toggle', methods: ['GET'])]
     public function toggle(Task $task): RedirectResponse
     {
@@ -77,10 +77,10 @@ class TaskController extends AbstractController implements FormCreateEditInterfa
 
     private function formProcess(Request $request, ?Task $task = null): RedirectResponse|Response
     {
-        if(!$task){
+        if(!$task) {
             $task = new Task();
             $mode = self::FORM_MODE_CREATE;
-        }else{
+        } else {
             $renderArguments['task'] = $task;
             $mode = self::FORM_MODE_EDIT;
         }
@@ -94,10 +94,10 @@ class TaskController extends AbstractController implements FormCreateEditInterfa
             $user = $this->getUser();
 
             $task->setUser($user);
-            
+
             $successMessage = 'La tâche a bien été modifiée.';
 
-            if(!$task->getId()){
+            if(!$task->getId()) {
                 $this->em->persist($task);
                 $successMessage = 'La tâche a été bien été ajoutée.';
             }

@@ -17,7 +17,6 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController implements FormCreateEditInterface
 {
-    
     public function __construct(private EntityManagerInterface $em)
     {
 
@@ -43,21 +42,24 @@ class UserController extends AbstractController implements FormCreateEditInterfa
     #[IsGranted('ROLE_ADMIN')]
     public function edit(User $user, Request $request, UserPasswordHasherInterface $hasher): RedirectResponse|Response
     {
-        return $this->formProcess($request, $hasher, $user);        
+        return $this->formProcess($request, $hasher, $user);
     }
 
     private function formProcess(
-        Request $request, 
-        UserPasswordHasherInterface $hasher, 
+        Request $request,
+        UserPasswordHasherInterface $hasher,
         ?User $user = null
-    ): RedirectResponse|Response
-    {   
-        if(!$user){
-            $user = new User();            
+    ): RedirectResponse|Response {
+        if(!$user) {
+            $user = new User();
         }
 
-        // this extract will provide variables : $mode, $successMessage, $redirectRouteIfError, $renderArguments
-        extract($this->initFormProcessData($user));
+        $data = $this->initFormProcessData($user);
+
+        $mode = $data['mode'];
+        $successMessage = $data['successMessage'];
+        $redirectRouteIfError = $data['redirectRouteIfError'];
+        $renderArguments = $data['renderArguments'];
 
         $form = $this->createForm(UserType::class, $user);
 
@@ -76,7 +78,7 @@ class UserController extends AbstractController implements FormCreateEditInterfa
 
             $user->setRoles([$role]);
 
-            if($mode === self::FORM_MODE_CREATE){
+            if($mode === self::FORM_MODE_CREATE) {
                 $this->em->persist($user);
             }
 
@@ -101,7 +103,7 @@ class UserController extends AbstractController implements FormCreateEditInterfa
             'redirectRouteIfError' => 'user_create'
         ];
 
-        if($user->getId()){        
+        if($user->getId()) {
             $data['mode'] = self::FORM_MODE_EDIT;
             $data['successMessage'] = 'L\'utilisateur a bien été modifié.';
             $data['redirectRouteIfError'] = 'user_edit';
