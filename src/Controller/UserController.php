@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Interface\FormCreateEditInterface;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,10 +12,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class UserController extends AbstractController
+class UserController extends AbstractController implements FormCreateEditInterface
 {
+    
     public function __construct(private EntityManagerInterface $em)
     {
 
@@ -31,41 +34,31 @@ class UserController extends AbstractController
 
     #[Route('/users/create', name: 'user_create', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function create(Request $request, UserPasswordHasherInterface $hasher): Response
+    public function create(Request $request, UserPasswordHasherInterface $hasher): RedirectResponse|Response
     {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $password = $hasher->hashPassword($user, $user->getPassword());
-            $user->setPassword($password);
-
-            $role = $form->get('roles')->getNormData();
-
-            if(!in_array($role, User::ROLES_LIST)) {
-                $this->addFlash('danger', 'Role invalid');
-                return $this->redirectToRoute('user_create');
-            }
-
-            $user->setRoles([$role]);
-
-            $this->em->persist($user);
-            $this->em->flush();
-
-            $this->addFlash('success', "L'utilisateur a bien été ajouté.");
-
-            return $this->redirectToRoute('user_list');
-        }
-
-        return $this->render('user/create.html.twig', ['form' => $form->createView()]);
+        return $this->formProcess($request, $hasher, user: null);
     }
 
     #[Route('/users/{id}/edit', name: 'user_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function edit(User $user, Request $request, UserPasswordHasherInterface $hasher): Response
+    public function edit(User $user, Request $request, UserPasswordHasherInterface $hasher): RedirectResponse|Response
     {
+        return $this->formProcess($request, $hasher, $user);        
+    }
+
+    private function formProcess(
+        Request $request, 
+        UserPasswordHasherInterface $hasher, 
+        ?User $user = null
+    ): RedirectResponse|Response
+    {   
+        if(!$user){
+            $user = new User();            
+        }
+
+        // this extract will provide variables : $mode, $successMessage, $redirectRouteIfError, $renderArguments
+        extract($this->initFormProcessData($user));
+
         $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
@@ -78,18 +71,43 @@ class UserController extends AbstractController
 
             if(!in_array($role, User::ROLES_LIST)) {
                 $this->addFlash('danger', 'Role invalid');
-                return $this->redirectToRoute('user_create');
+                return $this->redirectToRoute($redirectRouteIfError);
             }
 
             $user->setRoles([$role]);
 
+            if($mode === self::FORM_MODE_CREATE){
+                $this->em->persist($user);
+            }
+
             $this->em->flush();
 
-            $this->addFlash('success', "L'utilisateur a bien été modifié");
+            $this->addFlash('success', $successMessage);
 
             return $this->redirectToRoute('user_list');
         }
 
-        return $this->render('user/edit.html.twig', ['form' => $form->createView(), 'user' => $user]);
+        $renderArguments['form'] = $form->createView();
+
+        return $this->render("user/$mode.html.twig", $renderArguments);
+    }
+
+    private function initFormProcessData(User $user): array
+    {
+        $data = [
+            'renderArguments' => [],
+            'mode' => self::FORM_MODE_CREATE,
+            'successMessage' => 'L\'utilisateur a bien été ajouté.',
+            'redirectRouteIfError' => 'user_create'
+        ];
+
+        if($user->getId()){        
+            $data['mode'] = self::FORM_MODE_EDIT;
+            $data['successMessage'] = 'L\'utilisateur a bien été modifié.';
+            $data['redirectRouteIfError'] = 'user_edit';
+            $data['renderArguments']['user'] = $user;
+        }
+
+        return $data;
     }
 }

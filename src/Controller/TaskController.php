@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Form\TaskType;
+use App\Interface\FormCreateEditInterface;
 use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,7 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class TaskController extends AbstractController
+class TaskController extends AbstractController implements FormCreateEditInterface
 {
     public function __construct(private EntityManagerInterface $em)
     {
@@ -30,50 +31,17 @@ class TaskController extends AbstractController
 
     #[Route('/tasks/create', name: 'task_create', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function create(Request $request): Response
+    public function create(Request $request): RedirectResponse|Response
     {
-        $task = new Task();
-        $form = $this->createForm(TaskType::class, $task);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var User $user */
-            $user = $this->getUser();
-
-            $task->setUser($user);
-            $this->em->persist($task);
-            $this->em->flush();
-
-            $this->addFlash('success', 'La tâche a été bien été ajoutée.');
-
-            return $this->redirectToRoute('task_list');
-        }
-
-        return $this->render('task/create.html.twig', ['form' => $form->createView()]);
+        return $this->formProcess($request, task: null);
     }
 
     #[Route('/tasks/{id}/edit', name: 'task_edit', methods: ['GET', 'POST'])]
-    public function edit(Task $task, Request $request): Response
+    public function edit(Task $task, Request $request): RedirectResponse|Response
     {
-        $form = $this->createForm(TaskType::class, $task);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->em->flush();
-
-            $this->addFlash('success', 'La tâche a bien été modifiée.');
-
-            return $this->redirectToRoute('task_list');
-        }
-
-        return $this->render('task/edit.html.twig', [
-            'form' => $form->createView(),
-            'task' => $task,
-        ]);
+        return $this->formProcess($request, $task);
     }
-
+    
     #[Route('/tasks/{id}/toggle', name: 'task_toggle', methods: ['GET'])]
     public function toggle(Task $task): RedirectResponse
     {
@@ -106,4 +74,44 @@ class TaskController extends AbstractController
 
         return $this->redirectToRoute('task_list');
     }
+
+    private function formProcess(Request $request, ?Task $task = null): RedirectResponse|Response
+    {
+        if(!$task){
+            $task = new Task();
+            $mode = self::FORM_MODE_CREATE;
+        }else{
+            $renderArguments['task'] = $task;
+            $mode = self::FORM_MODE_EDIT;
+        }
+
+        $form = $this->createForm(TaskType::class, $task);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var User $user */
+            $user = $this->getUser();
+
+            $task->setUser($user);
+            
+            $successMessage = 'La tâche a bien été modifiée.';
+
+            if(!$task->getId()){
+                $this->em->persist($task);
+                $successMessage = 'La tâche a été bien été ajoutée.';
+            }
+
+            $this->em->flush();
+
+            $this->addFlash('success', $successMessage);
+
+            return $this->redirectToRoute('task_list');
+        }
+
+        $renderArguments['form'] = $form->createView();
+
+        return $this->render("task/$mode.html.twig", $renderArguments);
+    }
+
 }
