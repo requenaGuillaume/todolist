@@ -91,6 +91,7 @@
     ],
     "database:test:drop": "symfony console doctrine:database:drop --force --env=test",
     "cs-fix": "php tools/php-cs-fixer/vendor/bin/php-cs-fixer fix src",
+    "run-phpstan": "php vendor/bin/phpstan analyse src tests",
     "auto-scripts": {
       "cache:clear": "symfony-cmd",
       "assets:install %PUBLIC_DIR%": "symfony-cmd"
