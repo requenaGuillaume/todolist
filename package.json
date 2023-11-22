@@ -5,7 +5,7 @@
   "scripts": {
     "prepare": "husky install",
     "phpstan": "php vendor/bin/phpstan analyse src tests",
-    "csfixer": "php tools/php-cs-fixer/vendor/bin/php-cs-fixer fix src",
+    "csfixer": "php php vendor/bin/php-cs-fixer fix src --dry-run --stop-on-violation",
     "tests": "php vendor/bin/phpunit"
   }
 }
