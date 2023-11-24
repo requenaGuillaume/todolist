@@ -177,7 +177,7 @@ class UserControllerTest extends WebTestCase
         $this->client->submit($form);
         $this->client->followRedirect();
         $this->assertEquals('user_list', $this->client->getRequest()->attributes->get('_route'));
-        $this->assertSelectorTextContains('div.alert.alert-success', 'Superbe ! L\'utilisateur a bien été modifié');
+        $this->assertSelectorTextContains('div.alert.alert-success', 'Superbe ! L\'utilisateur a bien été modifié.');
 
         $updatedUser = $this->userRepository->find($user->getId());
 

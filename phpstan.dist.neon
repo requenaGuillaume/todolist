@@ -7,3 +7,6 @@ parameters:
         - src/
         - tests/
     checkGenericClassInNonGenericObjectType: false
+
+    ignoreErrors:
+        - '#Method .*::initFormProcessData\(\) return type has no value type specified in iterable type array\.#'
