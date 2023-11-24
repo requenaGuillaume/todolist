@@ -11,10 +11,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity('email')]
-class User implements UserInterface, PasswordAuthenticatedUserInterface 
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const ROLES_LIST = [
         'Utilisateur' => 'ROLE_USER',
@@ -28,7 +27,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 25, unique: true)]
     #[Assert\NotBlank(message: 'Vous devez saisir un nom d\'utilisateur.')]
-    private $username;
+    private ?string $username;
 
     #[ORM\Column(length: 64)]
     #[Assert\NotBlank(message: 'Vous devez saisir un mot de passe.')]
@@ -39,9 +38,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email(message: 'Le format de l\'adresse n\'est pas correcte.')]
     private ?string $email = null;
 
+    /**
+     * @var array<string> $roles
+     */
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection<int, Task>
+     */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Task::class)]
     private Collection $tasks;
 
@@ -88,6 +93,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @return array<string> $roles
+     */
     public function getRoles(): array
     {
         $roles = $this->roles;
@@ -96,6 +104,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
+    /**
+     * @param array<string> $roles
+     */
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;

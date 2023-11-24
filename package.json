@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "husky": "^8.0.0"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "phpstan": "php vendor/bin/phpstan analyse src tests",
+    "csfixer": "php tools/php-cs-fixer/vendor/bin/php-cs-fixer fix src",
+    "tests": "php vendor/bin/phpunit"
+  }
+}
