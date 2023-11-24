@@ -18,7 +18,7 @@ class TasksControllerTest extends WebTestCase
     private KernelBrowser $client;
     private EntityManagerInterface $em;
     private TaskRepository $taskRepository;
-
+    private User $testUser;
     
     public function setUp(): void
     {
@@ -29,22 +29,22 @@ class TasksControllerTest extends WebTestCase
         self::ensureKernelShutdown();
         $this->client = static::createClient();
 
-        $testUser = new User();
-        $testUser->setUsername('test')
+        $this->testUser = new User();
+        $this->testUser->setUsername('test')
             ->setEmail('test@test.test')
             ->setPassword('$2y$04$Gy1WKJfRNPtDjynITKF9o.8z5hMtxC8wA0m8wTBR2LBhGUjcC4tOC');
         
-        $this->em->persist($testUser);
+        $this->em->persist($this->testUser);
         $this->em->flush();
 
-        $this->client->loginUser($testUser);
+        $this->client->loginUser($this->testUser);
     }
 
     public function tearDown(): void
     {
         $connection = $this->getContainer()->get(Connection::class);
-        $connection->executeQuery('TRUNCATE TABLE user');
-        $connection->executeQuery('TRUNCATE TABLE task');
+        $connection->executeQuery('DELETE FROM task');
+        $connection->executeQuery('DELETE FROM user');
     }
 
     public function testListEmpty(): void
@@ -60,7 +60,7 @@ class TasksControllerTest extends WebTestCase
     
     public function testListNotEmpty(): void
     {
-        $this->createTestTask();    
+        $this->createTestTask($this->testUser);    
         $crawler = $this->client->request('GET', '/tasks');
     
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
@@ -119,7 +119,7 @@ class TasksControllerTest extends WebTestCase
     public function testEditSuccess(): void
     {
         $now = new DateTimeImmutable();
-        $task = $this->createTestTask($now); 
+        $task = $this->createTestTask($this->testUser, $now); 
  
         $crawler = $this->client->request('GET', "/tasks/{$task->getId()}/edit");
     
@@ -151,7 +151,7 @@ class TasksControllerTest extends WebTestCase
 
     public function testEditFails(): void
     {
-        $task = $this->createTestTask();
+        $task = $this->createTestTask($this->testUser);
 
         $crawler = $this->client->request('GET', "/tasks/{$task->getId()}/edit");
 
@@ -182,7 +182,7 @@ class TasksControllerTest extends WebTestCase
 
     public function testToggle(): void
     {
-        $task = $this->createTestTask();
+        $task = $this->createTestTask($this->testUser);
 
         $this->assertFalse($task->isDone());
 
@@ -200,7 +200,7 @@ class TasksControllerTest extends WebTestCase
 
     public function testDelete(): void
     {
-        $task = $this->createTestTask();
+        $task = $this->createTestTask($this->testUser);
 
         $this->client->request('GET', "/tasks/{$task->getId()}/delete");
         $this->client->followRedirect();
@@ -214,14 +214,45 @@ class TasksControllerTest extends WebTestCase
         $this->assertEquals('task_list', $this->client->getRequest()->attributes->get('_route'));
     }
 
+    public function testDeleteFail(): void
+    {    
 
-    private function createTestTask(DateTimeImmutable $dateTime = new DateTimeImmutable(),  bool $isDone = false): Task
+        $user = new User();
+        $user->setEmail('dummy@dummy.dummy')
+        ->setUsername('dummy')
+        ->setPassword('pass');
+        
+        $this->em->persist($user);
+        $this->em->flush();
+        
+        $this->client->loginUser($user);
+
+        $task = $this->createTestTask($this->testUser);
+
+        $this->client->request('GET', "/tasks/{$task->getId()}/delete");
+        $this->client->followRedirect();
+
+        $this->em->clear();
+        $deletedTask = $this->taskRepository->find($task->getId());
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->assertSelectorTextContains('div.alert.alert-danger', "Oops ! Vous n'êtes pas propriétaire de cette tache, vous ne pouvez donc pas la supprimer.");
+        $this->assertNotNull($deletedTask);
+        $this->assertEquals('task_list', $this->client->getRequest()->attributes->get('_route'));
+    }
+
+    private function createTestTask(
+        User $user,
+        DateTimeImmutable $dateTime = new DateTimeImmutable(),  
+        bool $isDone = false
+    ): Task
     {
         $task = new Task();
 
         $task->setTitle('test')
             ->setContent('test test test')
             ->setCreatedAt($dateTime)
+            ->setUser($user)
             ->isDone($isDone);
 
         $this->em->persist($task);

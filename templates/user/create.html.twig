@@ -27,6 +27,12 @@
                 {{ form_errors(form.email) }}
             </div>
 
+            {{ form_label(form.roles, null, {'label_attr': {'class': 'form-label fw-bold mt-3'}}) }}
+            {{ form_widget(form.roles, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.roles) }}
+            </div>
+
             <button type="submit" class="btn btn-success float-end mt-3">Ajouter</button>
         {{ form_end(form) }}
     </div>

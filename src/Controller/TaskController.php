@@ -5,11 +5,13 @@ namespace App\Controller;
 use App\Entity\Task;
 use App\Form\TaskType;
 use App\Repository\TaskRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class TaskController extends AbstractController
@@ -26,6 +28,7 @@ class TaskController extends AbstractController
     }
 
     #[Route('/tasks/create', name: 'task_create', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function create(Request $request): Response
     {
         $task = new Task();
@@ -34,6 +37,7 @@ class TaskController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $task->setUser($this->getUser());
             $this->em->persist($task);
             $this->em->flush();
 
@@ -78,13 +82,24 @@ class TaskController extends AbstractController
     }
 
     #[Route('/tasks/{id}/delete', name: 'task_delete', methods: ['GET'])]
-    public function delete(Task $task): RedirectResponse
+    public function delete(Task $task, UserRepository $userRepository): RedirectResponse
     {
+        $anonymous = $userRepository->findOneBy(['username' => 'anonyme']);
+
+        $taskOwner = $task->getUser();
+
+        $canDeleteAnonymousTasks = $taskOwner === $anonymous && $this->isGranted('ROLE_ADMIN');
+
+        if(!$canDeleteAnonymousTasks && $taskOwner !== $this->getUser()){
+            $this->addFlash('error', 'Vous n\'êtes pas propriétaire de cette tache, vous ne pouvez donc pas la supprimer.');
+            return $this->redirectToRoute('task_list');
+        }
+
         $this->em->remove($task);
         $this->em->flush();
 
         $this->addFlash('success', 'La tâche a bien été supprimée.');
 
         return $this->redirectToRoute('task_list');
-    }
+    }    
 }
