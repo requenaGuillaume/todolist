@@ -9,3 +9,5 @@ npm run csfixer
 
 echo "=============== Launch tests ==============="
 npm run tests
+
+echo "=============== Start to push ==============="
