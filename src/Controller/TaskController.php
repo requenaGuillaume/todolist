@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Task;
 use App\Entity\User;
 use App\Form\TaskType;
-use App\Interface\FormCreateEditInterface;
+use App\Interfaces\FormCreateEditInterface;
 use App\Repository\TaskRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
