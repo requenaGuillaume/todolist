@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         backupGlobals="false"
+         colors="true"
+         bootstrap="vendor/autoload.php"
+>
+    <php>
+        <env name="KERNEL_CLASS" value="App\Kernel" />
+        <env name="DATABASE_URL" value="mysql://root:@127.0.0.1:3306/todolist"/>
+        <env name="APP_DEBUG" value="false"/>
+    </php>
+
+    <testsuites>
+        <testsuite name="todolist tests">
+            <directory>./tests</directory>
+            <!-- Try to fix sf insight -->
+            <directory>tests</directory>
+            <directory>./src</directory>
+            <directory>src</directory>
+            
+            <file>./tests/src/Controller/DefaultControllerTest.php</file>
+            <file>./tests/src/Controller/LoginControllerTest.php</file>
+            <file>./tests/src/Controller/TasksControllerTest.php</file>
+            <file>./tests/src/Controller/UserControllerTest.php</file>
+            <file>./tests/src/DataFixtures/AppFixturesTest.php</file>
+            <file>./tests/src/Entity/UserTest.php</file>
+
+            <file>tests/src/Controller/DefaultControllerTest.php</file>
+            <file>tests/src/Controller/LoginControllerTest.php</file>
+            <file>tests/src/Controller/TasksControllerTest.php</file>
+            <file>tests/src/Controller/UserControllerTest.php</file>
+            <file>tests/src/DataFixtures/AppFixturesTest.php</file>
+            <file>tests/src/Entity/UserTest.php</file>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>src/</directory>
+            <!-- Try to fix sf insight -->
+            <directory>tests/</directory>
+            <directory>./tests/</directory>
+            <directory>./src/</directory>
+        </whitelist>
+        <blacklist>
+            <directory>vendor/</directory>
+        </blacklist>
+    </filter>
+</phpunit>
