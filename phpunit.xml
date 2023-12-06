@@ -33,6 +33,10 @@
             <file>tests/src/Controller/UserControllerTest.php</file>
             <file>tests/src/DataFixtures/AppFixturesTest.php</file>
             <file>tests/src/Entity/UserTest.php</file>
+
+            <exclude>./tools/php-cs-fixer/vendor/symfony/service-contracts/Test/ServiceLocatorTest.php</exclude>
+            <exclude>/tools/php-cs-fixer/vendor/symfony/service-contracts/Test/ServiceLocatorTest.php</exclude>
+            <exclude>tools/php-cs-fixer/vendor/symfony/service-contracts/Test/ServiceLocatorTest.php</exclude>
         </testsuite>
     </testsuites>
 
