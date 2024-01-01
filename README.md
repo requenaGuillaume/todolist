@@ -24,6 +24,7 @@ Use the "symfony serve" command in terminal (from the folder project)
 
 Run the terminal command : "composer install"
 Run the terminal command : "npm install"
+Run the terminal command : "npm run build"
 
 ## Create database
 
