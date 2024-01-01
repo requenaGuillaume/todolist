@@ -6,6 +6,7 @@ php 8^
 symfony 6.3^
 mysql 5.7^
 database & database interface (like phpmyadmin, workbench, adminer ...)
+Nodejs (& npm)
 
 ## Download the project
 
