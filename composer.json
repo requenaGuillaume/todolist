@@ -88,7 +88,8 @@
   "scripts": {
     "database:test:create": [
       "symfony console doctrine:database:create --env=test",
-      "symfony console doctrine:migrations:migrate --no-interaction --env=test"
+      "symfony console doctrine:migrations:migrate --no-interaction --env=test",
+      "npm run build -- --env=test"
     ],
     "database:test:drop": "symfony console doctrine:database:drop --force --env=test",
     "cs-fix": "php tools/php-cs-fixer/vendor/bin/php-cs-fixer fix src",

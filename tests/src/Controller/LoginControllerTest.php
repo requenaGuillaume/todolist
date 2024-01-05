@@ -5,7 +5,6 @@ namespace Tests\App\Controller;
 use App\Entity\User;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
-use LogicException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -30,12 +29,12 @@ class LoginControllerTest extends WebTestCase
         $this->testUser->setUsername('test')
             ->setEmail('test@test.test')
             ->setPassword('$2y$04$Gy1WKJfRNPtDjynITKF9o.8z5hMtxC8wA0m8wTBR2LBhGUjcC4tOC');
-        
+
         $em = static::getContainer()->get(EntityManagerInterface::class);
         $em->persist($this->testUser);
         $em->flush();
 
-        $this->crawler = self::$client->request('GET', '/login');
+        $this->crawler = self::$client->request('GET', '/login');       
         $this->form = $this->crawler->selectButton('Se connecter')->form();
     }
 
