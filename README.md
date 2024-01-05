@@ -56,6 +56,10 @@ APP_ENV=test symfony console doctrine:database:drop --force
 
 Run the fixtures using terminal command : "symfony console d:f:l"
 
+Test account username and password :
+username : coco
+password : coco
+
 ## Run tests
 
 Require a test database
@@ -94,6 +98,13 @@ It run the phpstan, cs fixer, and tests.
 If one of them fails, nothing will be pushed and you will be forced to fix the issue.
 
 And symfony insight launch analyze for every push, you can see the result directly on the pul request (check).
+
+## Skip husky hook
+
+If, for any reason, you need to skip the pre-push hook (with husky), which i do not recommand :
+You can go to the .husky folder, pre-push file and comment everything in it
+or
+You can use the command git push origin <branch_name> --no-verify
 
 ## You're done
 
