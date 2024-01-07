@@ -106,6 +106,14 @@ You can go to the .husky folder, pre-push file and comment everything in it
 or
 You can use the command git push origin <branch_name> --no-verify
 
+## Webpack Encore
+
+If the project doesn't work at this point, you may have to run :
+npm run build
+
+If you want to update css files, you will have to run :
+npm run watch
+
 ## You're done
 
 Project must be ready now
