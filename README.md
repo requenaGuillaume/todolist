@@ -57,8 +57,8 @@ APP_ENV=test symfony console doctrine:database:drop --force
 Run the fixtures using terminal command : "symfony console d:f:l"
 
 Test account username and password :
-username : coco
-password : coco
+username : toto
+password : toto
 
 ## Run tests
 
