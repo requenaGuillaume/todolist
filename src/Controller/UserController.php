@@ -50,30 +50,22 @@ class UserController extends AbstractController implements FormCreateEditInterfa
         UserPasswordHasherInterface $hasher,
         ?User $user = null
     ): RedirectResponse|Response {
-        if(!$user) {
-            $user = new User();
-        }
+        $user = $user ?? new User();
 
         $data = $this->initFormProcessData($user);
-
         $mode = $data['mode'];
-        $successMessage = $data['successMessage'];
-        $redirectRouteIfError = $data['redirectRouteIfError'];
-        $renderArguments = $data['renderArguments'];
 
         $form = $this->createForm(UserType::class, $user);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $hasher->hashPassword($user, $user->getPassword());
-            $user->setPassword($password);
+            $user->setPassword($hasher->hashPassword($user, $user->getPassword()));
 
             $role = $form->get('roles')->getNormData();
 
             if(!in_array($role, User::ROLES_LIST)) {
                 $this->addFlash('danger', 'Role invalid');
-                return $this->redirectToRoute($redirectRouteIfError);
+                return $this->redirectToRoute($data['redirectRouteIfError']);
             }
 
             $user->setRoles([$role]);
@@ -83,15 +75,14 @@ class UserController extends AbstractController implements FormCreateEditInterfa
             }
 
             $this->em->flush();
-
-            $this->addFlash('success', $successMessage);
+            $this->addFlash('success', $data['successMessage']);
 
             return $this->redirectToRoute('user_list');
         }
 
-        $renderArguments['form'] = $form->createView();
+        $data['renderArguments']['form'] = $form->createView();
 
-        return $this->render("user/$mode.html.twig", $renderArguments);
+        return $this->render("user/$mode.html.twig", $data['renderArguments']);
     }
 
     private function initFormProcessData(User $user): array

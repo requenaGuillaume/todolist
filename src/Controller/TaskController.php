@@ -86,15 +86,12 @@ class TaskController extends AbstractController implements FormCreateEditInterfa
         }
 
         $form = $this->createForm(TaskType::class, $task);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var User $user */
             $user = $this->getUser();
-
             $task->setUser($user);
-
             $successMessage = 'La tâche a bien été modifiée.';
 
             if(!$task->getId()) {
@@ -103,7 +100,6 @@ class TaskController extends AbstractController implements FormCreateEditInterfa
             }
 
             $this->em->flush();
-
             $this->addFlash('success', $successMessage);
 
             return $this->redirectToRoute('task_list');
