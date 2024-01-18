@@ -12,39 +12,43 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    private ?ObjectManager $em;
+
     public function __construct(
         private UserPasswordHasherInterface $hasher,
         private UserRepository $userRepository
     ) {
-
+        $this->em = null;
     }
 
     public function load(ObjectManager $manager): void
     {
-        $admin = $this->createUser($manager, 'toto@toto.toto', 'toto', 'ROLE_ADMIN', 'toto');
+        $this->em = $manager;
+
+        $admin = $this->createUser('toto@toto.toto', 'toto', 'ROLE_ADMIN', 'toto');
         $anonymous = $this->userRepository->findOneBy(['username' => 'anonyme']);
 
         if(!$anonymous) {
-            $anonymous = $this->createUser($manager, 'anonymous@unexistant.dummy', 'anonyme', 'ROLE_USER', 'password');
+            $anonymous = $this->createUser('anonymous@unexistant.dummy', 'anonyme', 'ROLE_USER', 'password');
         }
 
         for($i = 0; $i < 3; $i++) {
-            $this->createTask($anonymous, $i, $manager);
+            $this->createTask($anonymous, $i);
         }
 
         for($i = 3; $i < 6; $i++) {
-            $this->createTask($admin, $i, $manager);
+            $this->createTask($admin, $i);
         }
 
         for($i = 7; $i < 10; $i++) {
-            $user = $this->createUser($manager, "user$i@mail.com", "User #$i", 'ROLE_USER', 'password');
-            $this->createTask($user, $i, $manager);
+            $user = $this->createUser("user$i@mail.com", "User #$i", 'ROLE_USER', 'password');
+            $this->createTask($user, $i);
         }
 
         $manager->flush();
     }
 
-    private function createTask(User $user, int $i, ObjectManager $manager): void
+    private function createTask(User $user, int $i): void
     {
         $task = new Task();
         $task->setTitle("Title #$i")
@@ -52,11 +56,10 @@ class AppFixtures extends Fixture
             ->setCreatedAt(new DateTimeImmutable())
             ->setUser($user);
 
-        $manager->persist($task);
+        $this->em->persist($task);
     }
 
     private function createUser(
-        ObjectManager $manager,
         string $email,
         string $username,
         string $role,
@@ -68,7 +71,7 @@ class AppFixtures extends Fixture
             ->setUsername($username)
             ->setPassword($this->hasher->hashPassword($user, $password));
 
-        $manager->persist($user);
+        $this->em->persist($user);
 
         return $user;
     }
