@@ -1,0 +1,36 @@
+
+
+== CSS ==
+
+-- OLD
+-bootstrap : 3 erreurs et 190 avertissements
+-shop-homepage : 0 erreur
+
+-- NEW
+-fichier unique : 2 erreurs et 57 avertissements
+
+
+== HTML ==
+L'erreur redondante du DOCTYPE manquant est du au copié collé dans l'inspecteur qui ne le prenait pas.
+La totalité des erreurs restantes viennent de la toolbar de Symfony (qui ne sera pas activé en production).
+
+La mise à jour a donc permis de supprimer tous les warning comparé au projet initial.
+
+-- OLD
+-create-task : 2 erreurs, 1 warning
+-create-user : 2 erreurs, 1 warning
+-edit-user : 2 erreurs, 1 warning
+-homepage : 3 erreurs, 1 warning
+-login : 2 erreurs, 1 warning
+-tasks : 3 erreurs, 3 warnings
+-users: 3 erreurs, 1 warning
+
+-- NEW
+-homepage : 3 erreurs
+-login : 4 erreurs
+-task-create : 3 erreurs
+-tasks : 3 erreurs
+-user-create : 3 erreurs
+-user-edit : 3 erreurs
+-users: 3 erreurs
+

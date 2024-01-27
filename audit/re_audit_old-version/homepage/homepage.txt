@@ -1,0 +1,23 @@
+A noter qu'il faut etre authentifié pour y acceder
+
+First call
+Execution time : 181ms
+Peak memory : 2.00 MB
+Twig : 44ms
+Queries : 1 - 0.54ms
+Deprecations : 11
+cache : 19 call, 5.62ms, hits/reads 77.78%
+
+
+Second call
+Execution time : 143ms
+Peak memory : 2.00 MB
+Twig : 5ms
+Queries : 1 - 0.62ms
+Deprecations : 11
+cache : 19 call, 5.62ms, hits/reads 77.78%
+
+
+Network
+jQuery not found : 214ms - 274B
+css files : 2 - 19 + 44 ms | 121kb + 1.1kb

@@ -1,0 +1,21 @@
+First call
+Execution time : 140ms
+Peak memory : 2.00 MB
+Twig : 6ms
+Deprecations : 11
+cache : 34 call, 3.43ms, hits/reads 81.25%
+Queries : 2 - 0.99ms
+
+
+Second call
+Execution time : 117ms
+Peak memory : 2.00 MB
+Twig : 4ms
+Deprecations : 11
+cache : 34 call, 6.81ms, hits/reads 81.25%
+Queries : 2 - 0.97ms
+
+
+Network
+jQuery not found : 194ms - 274B
+css files : 2 - 17 + 14 ms | 121kb + 1.1kb

@@ -1,0 +1,18 @@
+First call
+Execution time : 105ms
+Peak memory : 4 MiB
+Twig : 8ms
+Deprecations : 1
+Queries : 2 - 1.25ms
+
+
+Second call
+Execution time : 128ms
+Peak memory : 4 MiB
+Twig : 8ms
+Queries : 2 - 1.56ms
+
+
+Network
+js a verifier : 
+css files : 19.7 kb - 20ms

@@ -1,0 +1,22 @@
+A noter qu'on peut aller sur cette page sans etre authentifié
+
+First call
+Execution time : 139ms
+Peak memory : 2.00 MB
+Twig : 12ms
+Deprecations : 12
+cache : 19 call, 5.23ms, hits/reads 77.78%
+queries : 1 - 0.73ms
+
+
+Second call
+Execution time : 116ms
+Peak memory : 2.00 MB
+Twig : 8ms
+Deprecations : 12
+cache : 19 call, 5.08ms, hits/reads 77.78%
+queries : 1 - 0.63ms
+
+Network
+jQuery not found : 200ms - 274B
+css files : 2 - 16 + 14 ms | 121kb + 1.1kb

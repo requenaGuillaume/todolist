@@ -1,0 +1,14 @@
+First call
+Execution time : 726ms
+Peak memory : 10 MiB
+Twig : 42ms
+
+Second call
+Execution time : 86ms
+Peak memory : 4 MiB
+Twig : 10ms
+
+
+Network
+js a verif : 
+css files : 19.8 kb - 17ms
