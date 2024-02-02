@@ -29,8 +29,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank(message: 'Vous devez saisir un nom d\'utilisateur.')]
     private ?string $username;
 
-    #[ORM\Column(length: 64)]
+    #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Vous devez saisir un mot de passe.')]
+    #[Assert\Length(
+        min: 12,
+        minMessage: 'Password length must be at least 12 characters',
+    )]
+    #[Assert\Regex(
+        pattern: '/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/',
+        message: 'Password must contains at least one letter, one number and one special characters (@$!%*?&)'
+    )]
     private ?string $password = null;
 
     #[ORM\Column(length: 60, unique: true)]
